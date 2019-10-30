@@ -1,5 +1,10 @@
 # MongoDB-with-Mongoose-Tutorial
 - Connecting MongoDB database with the application with the Mongose Library (makes working with MongoDB in Node.js easy)
+- Mongoose is an Object Data Modeling (ODM) library for MongoDB and Node.js, a higher level of abstraction.
+- Mongoose allows for rapid and simple development of mongod database interactions
+- Features: schemas to model data and relationships, easy data validation, simple query API, middleware, etc;
+- ***Mongoose schema***:where we model our data, by describing the structure of the data, default values, and validation;
+- ***Mongoose model***: a wrapper for the schema, providing an interface to the database for CRUD options. A model is like a *blue print* - *classes*
 <br/>
 
 ## Connecting Our Database with the Express App
@@ -62,3 +67,31 @@ DB connection successful
 (For the next section empty the database - Go to Atlas -> Collections -> Delete (tours))  
 <br/>
 
+## Creating a Simple Tour Model
+- for now code in server.js, this will later be placed in a different file:
+- we create models in mongoose in order to create documents using it and also to perform CRUD operations on it.
+- to create a model we need a schema(describe data, set default values, validate the data,...)
+- create a schema for tours:
+```JavaScript
+// create schema for tours:
+const tourSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A tour must have a name'], //pass in an array instead to use validators
+    unique: true
+  },
+  rating: {
+    type: Number,
+    default: 4.5
+  },
+  price: {
+    type: Number,
+    required: [true, 'A tour must have a price']
+  }
+});
+```  
+- Create a model out of that schema:
+```JavaScript
+// create a model out of that schema
+const Tour = mongoose.model('Tour', tourSchema);
+```
