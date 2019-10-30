@@ -94,4 +94,43 @@ const tourSchema = new mongoose.Schema({
 ```JavaScript
 // create a model out of that schema
 const Tour = mongoose.model('Tour', tourSchema);
-```
+```  
+<br/> 
+
+## Creating Documents (in code) and Testing the Model
+- create a variable, this will  be a new document created out of the Tour model 
+```JavaScript
+// create a document of Tour (instance of Tour)
+const testTour = new Tour({
+  name: 'The Forest Hicker',
+  rating: 4.7,
+  price: 497
+});
+```  
+- This instance of the Tour model which has now a couple of methods that we can use in order to interact with the database.  
+```JavaScript
+// interact with the database (the save method returns a promise that we can then consume - later we will be using async/await in order to consume these promises)
+testTour
+  .save()
+  .then(doc => {
+    console.log(doc);
+  })
+  .catch(err => {
+    console.log('Error!', err);
+  });
+```  
+Run the application; the console will display the document that was just saved in the database:  
+```JSON
+DB connection successful
+{ rating: 4.7,
+  _id: 5db9e143e89cd960b0ca5ba1,
+  name: 'The Forest Hicker',
+  price: 497,
+  __v: 0 }
+``` 
+- move over to Atlas and look at our database - you will see that the Collection and document are created and saved. (DISPLAY IT IN COMPASS!!)
+![Atlas display db](images/mongoose1.png)  
+<br/>
+
+## Intro to Back-End Architecture: MVC, Types of Logic, and More
+
