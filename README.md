@@ -16,12 +16,12 @@
 - require Mongoose package - ```const mongoose = require('mongoose');```
 - use the variable and connect to mongose and pass in the connection string along with an object with some options(if you write you own app just pass in the same options)  
   before we pass in the connection string replace the password
-- the connect() method is going to return a promise which gets access to a connection object (result value of the promise); use it ```then()```. Console log the object and see if we have a connection:
+- the connect() method is going to return a promise which gets access to a connection object (result value of the promise); use it ```then()```. Console log the object and see if we have a connection; we assume that everything works fine and didn't implement any error handling.
 ```JavaScript
 // change the password in the connection string
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
-  process.env.DATABASE.PASSWORD
+  process.env.DATABASE_PASSWORD
 );
 // connect to mongoose:
 mongoose
@@ -34,10 +34,31 @@ mongoose
     console.log(con.connections);
     console.log('DB connection successful');
   });
+```  
+Run the application and examine the connection object - ```npm run start:dev```  
+```JSON
+. . .
+    name: 'admin',
+    host: 'cluster0-shard-00-00-hhfve.mongodb.net',
+    port: 27017,
+    user: 'aygun',
+    pass: 'NIhKQ9tWYkxxxx',
+    db:
+     Db {
+       _events: [Object],
+       _eventsCount: 3,
+       _maxListeners: undefined,
+       s: [Object],
+       serverConfig: [Getter],
+       bufferMaxEntries: [Getter],
+       databaseName: [Getter] } } ]
+DB connection successful
+```  
+- clear the promise from the connection object and just console log a message  
+```JavaScript
+  .then(() => console.log('DB connection successful'));
+```  
+- to connect to a local database - replace the hosted database version ```.connect(DB, {``` with the local database version``` .connect(process.env.DATABASE_LOCAL, {```.  
+(For the next section empty the database - Go to Atlas -> Collections -> Delete (tours))  
+<br/>
 
-// START SERVER
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`App running on port ${port}...`);
-});
-```
