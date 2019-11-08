@@ -135,3 +135,72 @@ DB connection successful
 ## Intro to Back-End Architecture: MVC, Types of Logic, and More
 ![MVC Architecture](images/mongoose2.png)  
 ![MVC Architecture](images/mongoose3.png)  
+### Refactoring to MVC
+- We already have the controller and routes folder. Create a models folder and add a tourModel.js file to it.
+- copy and past tourSchema, mongoose from the server.js to this file. Export the Tour at the end.  
+**Model - tourModel.js**:  
+```JavaScript
+// require mongoose package
+const mongoose = require('mongoose');
+
+// create schema for tours:
+const tourSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A tour must have a name'], //pass in an array instead to use validators
+    unique: true
+  },
+  rating: {
+    type: Number,
+    default: 4.5
+  },
+  price: {
+    type: Number,
+    required: [true, 'A tour must have a price']
+  }
+});
+
+// create a model out of that schema
+const Tour = mongoose.model('Tour', tourSchema);
+
+//export the Tour
+module.exports = Tour;
+```  
+- we will need the Tour in the controller where we going to do the CRUD operations. Import the model in the tourController.js (API).
+- recap that, as soon as we get a post request in the tourRoutes.js the createTour functions in the tourController.js will be hit:  
+***tourRoutes.js file:***
+```JavaScript
+router
+  .route('/')
+  .get(tourController.getAllTours)
+  .post(tourController.createTour);
+```   
+***tourController.js***- this will create a tour from the data that comes from the body:   
+```JavaScript
+// Create a Tour from the data that comes from the body:
+/*
+- One way to create a tour:
+	const newTour = new Tour({});
+	newTour.save();
+
+- Another way to create a tour:
+here we call the create method on the model itself; also notice that instead of using promisses with .then(), we are are using asynch/await and save the result value of the promise in a variable; also pass in some real data into the create method. Note that with async/await you have to use try/catch to test for errors */
+	exports.createTour = async (request, response) => {
+	  try {
+		const newTour = await Tour.create(request.body);
+		response.status(201).json({
+		  status: 'success',
+		  data: {
+			tour: newTour
+		  }
+		});
+	  } catch (err) {
+		// the promise that was created (Tour.create()) and rejected will enter here!
+		response.status(400).json({
+		  status: 'fail',
+		  message: err
+		});
+	  }
+	};
+```
+
