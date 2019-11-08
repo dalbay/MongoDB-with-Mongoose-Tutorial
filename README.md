@@ -172,7 +172,9 @@ module.exports = Tour;
 ```  
 - we will need the Tour in the controller where we going to do the CRUD operations. Import the model in the tourController.js (API).
 - recap that, as soon as we get a post request in the tourRoutes.js the createTour functions in the tourController.js will be hit:  
-***tourRoutes.js file:***
+
+***tourRoutes.js file:***  
+
 ```JavaScript
 router
   .route('/')
