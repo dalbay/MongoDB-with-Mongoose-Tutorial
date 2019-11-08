@@ -132,6 +132,9 @@ DB connection successful
 ![Atlas display db](images/mongoose1.png)  
 <br/>
 
+---
+# Build the API with a Database
+
 ## Intro to Back-End Architecture: MVC, Types of Logic, and More
 ![MVC Architecture](images/mongoose2.png)  
 ![MVC Architecture](images/mongoose3.png)  
@@ -169,7 +172,9 @@ const Tour = mongoose.model('Tour', tourSchema);
 //export the Tour
 module.exports = Tour;
 ```  
-- we will need the Tour in the controller where we going to do the CRUD operations. Import the model in the tourController.js (API).
+## Create Documents
+- ***Build the API with a database***
+- Import the tour model to the tourController.js (API).
 - recap that, as soon as we get a post request in the tourRoutes.js the createTour functions in the tourController.js will be hit:  
 
 ***tourRoutes.js file:***  
@@ -215,7 +220,11 @@ Test you application with postman -
 - You don't see diffuculty and duration created, because they are not in your schema and therefore not put into the database.  
 ![MVC Architecture](images/mongoose4.png)  
 - Open Mongoose and check out the entry  
-![Mongoose entry](images/mongoose5.png)
+![Mongoose entry](images/mongoose5.png)  
+
+## Reading Documents  
+
+
 
 
 
