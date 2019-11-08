@@ -138,7 +138,10 @@ DB connection successful
 ### Refactoring to MVC
 - We already have the controller and routes folder. Create a models folder and add a tourModel.js file to it.
 - copy and past tourSchema, mongoose from the server.js to this file. Export the Tour at the end.  
+<br/>
+
 **Model - tourModel.js**:  
+
 ```JavaScript
 // require mongoose package
 const mongoose = require('mongoose');
