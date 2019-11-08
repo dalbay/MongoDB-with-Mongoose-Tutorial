@@ -189,7 +189,7 @@ router
 	newTour.save();
 
 - Another way to create a tour:
-here we call the create method on the model itself; also notice that instead of using promisses with .then() function,
+call the create method on the model itself; notice that instead of using promises with .then() function,
 we are are using asynch/await and save the result value of the promise in a variable; 
 also pass in some real data into the create method. 
 Note that with async/await you have to use try/catch to test for errors */
@@ -210,5 +210,10 @@ Note that with async/await you have to use try/catch to test for errors */
 		});
 	  }
 	};
-```
+```  
+Test you application with postman -  
+- You don't see diffuculty and duration created, because they are not in your schema and therefore not put into the database.  
+![MVC Architecture](images/mongoose4.png)  
+
+
 
