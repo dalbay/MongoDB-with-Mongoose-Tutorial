@@ -139,7 +139,6 @@ DB connection successful
 - We already have the controller and routes folder. Create a models folder and add a tourModel.js file to it.
 - copy and past tourSchema, mongoose from the server.js to this file. Export the Tour at the end.  
  
-<br/>
 
 **Model - tourModel.js**:  
 
@@ -181,7 +180,7 @@ router
   .get(tourController.getAllTours)
   .post(tourController.createTour);
 ```   
-***tourController.js***- this will create a tour from the data that comes from the body:   
+***tourController.js*** - this will create a tour from the data that comes from the body:   
 ```JavaScript
 // Create a Tour from the data that comes from the body:
 /*
@@ -190,7 +189,10 @@ router
 	newTour.save();
 
 - Another way to create a tour:
-here we call the create method on the model itself; also notice that instead of using promisses with .then(), we are are using asynch/await and save the result value of the promise in a variable; also pass in some real data into the create method. Note that with async/await you have to use try/catch to test for errors */
+here we call the create method on the model itself; also notice that instead of using promisses with .then() function,
+we are are using asynch/await and save the result value of the promise in a variable; 
+also pass in some real data into the create method. 
+Note that with async/await you have to use try/catch to test for errors */
 	exports.createTour = async (request, response) => {
 	  try {
 		const newTour = await Tour.create(request.body);
