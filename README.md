@@ -214,6 +214,8 @@ Note that with async/await you have to use try/catch to test for errors */
 Test you application with postman -  
 - You don't see diffuculty and duration created, because they are not in your schema and therefore not put into the database.  
 ![MVC Architecture](images/mongoose4.png)  
+- Open Mongoose and check out the entry  
+![Mongoose entry](images/mongoose5.png)
 
 
 
