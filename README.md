@@ -134,4 +134,4 @@ DB connection successful
 
 ## Intro to Back-End Architecture: MVC, Types of Logic, and More
 ![MVC Architecture](images/mongoose2.png)  
-
+![MVC Architecture](images/mongoose3.png)  
