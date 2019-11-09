@@ -1,8 +1,8 @@
 # MongoDB-with-Mongoose-Tutorial
-- Connecting MongoDB database with the application with the Mongose Library (makes working with MongoDB in Node.js easy)
+- Connecting MongoDB database with the application and with the Mongose Library (working with MongoDB in Node.js easier)
 - Mongoose is an Object Data Modeling (ODM) library for MongoDB and Node.js, a higher level of abstraction.
-- Mongoose allows for rapid and simple development of mongod database interactions
-- Features: schemas to model data and relationships, easy data validation, simple query API, middleware, etc;
+- Mongoose allows for rapid and simple development with MongoDB interactions
+- Features: schemas to data model and relationships, easy data validation, simple query API, middleware, etc;
 - ***Mongoose schema***:where we model our data, by describing the structure of the data, default values, and validation;
 - ***Mongoose model***: a wrapper for the schema, providing an interface to the database for CRUD options. A model is like a *blue print* - *classes*
 <br/>
@@ -173,8 +173,7 @@ const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
 ```  
 ## Create Documents
-- ***Build the API with a database***
-- Import the tour model to the tourController.js (API).
+- Import the tour model to the tourController.js - (API).
 - recap that, as soon as we get a post request in the tourRoutes.js the createTour functions in the tourController.js will be hit:  
 
 ***tourRoutes.js file:***  
@@ -223,6 +222,7 @@ Test you application with postman -
 ![Mongoose entry](images/mongoose5.png)  
 
 ## Reading Documents  
+- implement getAllTours and getTours route handler  
 
 
 
