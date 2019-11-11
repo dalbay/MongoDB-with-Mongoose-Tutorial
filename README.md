@@ -174,6 +174,7 @@ module.exports = Tour;
 ```  
 ## Create Documents
 - Import the tour model to the tourController.js - (API).
+- We will be using **Mongoose's Query Methods** - ```findById```, ```findByIdAndUpdate```,... *(look up mongoose documnetation)*.
 - recap that, as soon as we get a post request in the tourRoutes.js the createTour functions in the tourController.js will be hit:  
 
 ***tourRoutes.js file:***  
@@ -249,7 +250,7 @@ exports.getAllTours = async (request, response) => {
 Test getAllTours handler in postman:   
 ![getAllTours reading from db](images/mongoose6.png)  
 
-Next, implement the getTours handler:  
+Next, implement the getTour handler:  
 ```JavaScript
 // get a Tour
 exports.getTour = async (request, response) => {
@@ -257,7 +258,7 @@ exports.getTour = async (request, response) => {
     // examine router and see how we specify the id in the URL
     const tour = await Tour.findById(request.params.id);
     // same as above (with filter object):
-    //Tour.findOne({ _id: request.params.id });
+    // Tour.findOne({ _id: request.params.id });
 
     response.status(200).json({
       status: 'success',
@@ -275,6 +276,35 @@ exports.getTour = async (request, response) => {
 ```  
 Test getTour handler in postman:   
 ![getTour reading from db](images/mongoose7.png)  
+<br/>  
+
+## Updating Documents:  
+```JavaScript
+// update a Tour
+exports.updateTour = async (request, response) => {
+  try {
+    // get document to update - await the result of the query
+    const tour = await Tour.findByIdAndUpdate(request.params.id, request.body, {
+      // query method optional params(mongoose docs)
+      new: true,
+      runValidators: true
+    });
+
+    response.status(200).json({
+      status: 'success',
+      data: {
+        tour: tour  // in ES6 all we write is -> tour
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+![getTour reading from db](images/mongoose9.png)  
 
 
 
