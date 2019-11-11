@@ -286,8 +286,8 @@ exports.updateTour = async (request, response) => {
     // get document to update - await the result of the query
     const tour = await Tour.findByIdAndUpdate(request.params.id, request.body, {
       // query method optional params(mongoose docs)
-      new: true,
-      runValidators: true
+      new: true,  // returns new tour
+      runValidators: true // retuns error if input type wrong.
     });
 
     response.status(200).json({
@@ -305,6 +305,116 @@ exports.updateTour = async (request, response) => {
 };
 ```  
 ![getTour reading from db](images/mongoose9.png)  
+<br/>
+
+## Deleting Documents:  
+```JavaScript
+// delete a Tour
+exports.deleteTour = async (request, response) => {
+  try {
+    await Tour.findByIdAndDelete(request.params.id);
+
+    response.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+<br/>
+
+## Modelling the Tours
+- We will update the tourSchema since we have a lot more data about a tour in reality - ```https://www.natours.dev/api/v1/tours/```
+- Here is the updated Schema (tourModel.js) that accepts more properties as an input 
+```JavaScript
+const tourSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A tour must have a name'], //pass in an array instead to use validators
+    unique: true,
+    trim: true
+  },
+  duration: {
+    type: Number,
+    required: [true, 'A tour must have a duration']
+  },
+  maxGroupSize: {
+    type: Number,
+    required: [true, 'A tour must have a size']
+  },
+  difficulty: {
+    type: String,
+    required: [true, 'A tour must have a difficulty']
+  },
+  ratingsAverage: {
+    type: Number,
+    default: 4.5
+  },
+  ratingsQunatity: {
+    type: Number,
+    default: 0
+  },
+  price: {
+    type: Number,
+    required: [true, 'A tour must have a price']
+  },
+  priceDiscount: Number,
+  summary: {
+    type: String,
+    trim: true,
+    required: [true, 'A tour must have a description']
+  },
+  description: {
+    type: String,
+    trim: true
+  },
+  imageCover: {
+    type: String,
+    required: [true, 'A tour must have a cover image']
+  },
+  images: [String], //array of strings (references)
+  createdAt: {
+    type: Date,
+    default: Date.now()
+  },
+  startDates: [Date]
+});
+```  
+Now, when we can create a new tour in Postman that accepts more data; and save it on the database. Here is an example tour :  
+```JSON
+            {
+                "ratingsAverage": 4.7,
+                "ratingsQunatity": 0,
+                "images": [
+                    "tour-1-1.jpg",
+                    "tour-1-2.jpg",
+                    "tour-1-3.jpg"
+                ],
+                "createdAt": "2019-11-11T19:43:51.670Z",
+                "startDates": [
+                    "2021-04-25T14:00:00.000Z",
+                    "2021-07-20T14:00:00.000Z",
+                    "2021-10-05T14:00:00.000Z"
+                ],
+                "_id": "5dc9ba86084d306b9c12233c",
+                "name": "The Forest Hiker",
+                "duration": 5,
+                "maxGroupSize": 25,
+                "difficulty": "easy",
+                "price": 397,
+                "summary": "Breathtaking hike through the Canadian Banff National Park",
+                "description": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                "imageCover": "tour-1-cover.jpg",
+                "__v": 0
+            }
+```  
+
+
 
 
 
