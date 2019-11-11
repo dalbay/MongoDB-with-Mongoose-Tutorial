@@ -246,8 +246,36 @@ exports.getAllTours = async (request, response) => {
   }
 };
 ```  
-Try it out in postman:  
+Test getAllTours handler in postman:   
 ![getAllTours reading from db](images/mongoose6.png)  
+
+Next, implement the getTours handler:  
+```JavaScript
+// get a Tour
+exports.getTour = async (request, response) => {
+  try {
+    // examine router and see how we specify the id in the URL
+    const tour = await Tour.findById(request.params.id);
+    // same as above (with filter object):
+    //Tour.findOne({ _id: request.params.id });
+
+    response.status(200).json({
+      status: 'success',
+      data: {
+        tour
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+Test getTour handler in postman:   
+![getTour reading from db](images/mongoose7.png)  
+
 
 
 
