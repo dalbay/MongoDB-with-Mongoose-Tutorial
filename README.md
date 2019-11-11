@@ -222,7 +222,32 @@ Test you application with postman -
 ![Mongoose entry](images/mongoose5.png)  
 
 ## Reading Documents  
-- implement getAllTours and getTours route handler  
+- implement and getTours and getAllTours route handler  
+tourController.js - getAllTours.js:  
+```JavaScript
+// get ALL Tours
+exports.getAllTours = async (request, response) => {
+  try {
+    // use the models find method - gets all data in Tour collection
+    const tours = await Tour.find();
+
+    response.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+Try it out in postman:  
+![getAllTours reading from db](images/mongoose6.png)  
 
 
 
