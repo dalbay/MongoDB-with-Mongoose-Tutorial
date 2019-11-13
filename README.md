@@ -426,14 +426,14 @@ const mongoose = require('mongoose');
 
 // require the environmetal variable module
 const dotenv = require('dotenv');
+
 // require the tourModel (we will write to tours)
 const Tour = require('../../models/tourModel');
 
 // read and save the environmental variables in node.js
 dotenv.config({ path: './config.env' });
 
-// we need to access the database only once.
-// change the password in the connection string
+// access the database only once; change password in connection string
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD
@@ -473,13 +473,15 @@ const deleteData = async () => {
   }
 };
 
-// instead of calling the functions we will interact with the comment line
+/* Executing Code in the Comment Line
+   - instead of a functions call (importData(), deleteData()) we will interact with the comment line
+   - note that we can access the arguments in comment line with process.argv:
 console.log(process.argv);
 
 ```  
-Run the application in another terminal by adding another argument at the end - ```> node dev-data/data/import-dev-data.js --import```  
+Run the application in another terminal and add another argument at the end - ```> node dev-data/data/import-dev-data.js --import```  
 The output on the console will be these 3 lines of ```process.argv``` arguments:  
-```
+```JavaScript
 [ 'C:\\Program Files\\nodejs\\node.exe',  'C:\\Users\\aygun\\OneDrive\\Documents\\GitHub\\Express_Tutorial\\dev-data\\data\\import-dev-data.js',
   '--import' ]
 ```  
