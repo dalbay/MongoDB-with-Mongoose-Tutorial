@@ -563,8 +563,7 @@ GET /api/v1/tours?duration=5&difficulty=easy 200 49.183 ms - 9378
 - Next use the data in order to implement it for filtering  
 - In Mongoose there are two ways of writing queries.  
   - The first way is to pass in a filter object to the find method.   
- 
-  ```JavaScript
+```JavaScript
   // get Tours (Filter)
 exports.getAllTours = async (request, response) => {
   try {
@@ -577,9 +576,9 @@ exports.getAllTours = async (request, response) => {
 
     response.status(200).json({
       status: 'success',
-		. . . 
+	  . . . 
 };
-  ```  
+```   
 	Or just pass in the data from the query() method to ***implement a simple query***:
 	```JavaScript
 	const tours = await Tour.find(request.query);
