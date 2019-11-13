@@ -496,7 +496,7 @@ The output on the console will be these 3 lines of ```process.argv``` arguments:
   '--import' ]
 */
 ```  
-Add the if statement (before you call the process.argv), and check the third argument which will be added in the terminal and calls a functions accordingly:  
+Add the following if statement (before calling ```process.argv()```); and check the third argument which will be added in the terminal; and make the right function call.   
 ```JavaScript
 if (process.argv[2] === '--import') {
   importData();
@@ -513,7 +513,7 @@ OUTPUT:
 DB connection successful
 Data successfully deleted
 ```  
-You can also add ```process.exit()``` right after try-catch in the deleteData() and importData() function to stop the application in the terminal.  
+You can add ```process.exit()``` right after try-catch in the deleteData() and importData() function to stop the application in the terminal.  
 <br/>
 
 Import all the data from the JSON file into the database - ```> node dev-data/data/import-dev-data.js 
@@ -525,27 +525,32 @@ Data successfully loaded
 ```  
 ---  
 ## Making the API Better: Filtering  
-- allow the user to filter data using a Query String(key-value pairs in the URL) like: ```127.0.0.1:8000/api/v1/tours?duration=5&difficulty=easy```  
-- in Postman we can also add the query string to the Query Params, this will also add it to the URL. We can also turn them on an off with the checkmark next to each key-value.   
+- Allow the user to filter data using a Query String(key-value pairs in the URL)  
+  Example: ```127.0.0.1:8000/api/v1/tours?duration=5&difficulty=easy```  
+- In Postman we can add the query string in the Query Params Section; and turn the query strings on/off with a checkmark next to each key-value.   
 ![Query Sting in Postman](images/mongoose10.png)    
--  Next ***access the data from the query string in the express application*** with the```query``` method.  Express does this for us in order to make node.js development a lot faster. Here we see an example of how to access the data:  
+-  Next ***access the data from the query string in the express application*** with the```query``` function.  
+  Express does this for us in order to make node.js development a lot faster.  
+
+Here we see an example of how to access the data:  
+  
 ```JavaScript  
-// get ALL Tours
+// get Tours (Filter)
 exports.getAllTours = async (request, response) => {
   try {
-	// access data in the query string:
-    console.log(request.query);
+		// access data in the query string:
+		console.log(request.query);
 
-    const tours = await Tour.find();
+		const tours = await Tour.find();
 
-    response.status(200).json({
-      status: 'success',
-      . . .
+		response.status(200).json({
+		  status: 'success',
+		  . . .
 };
 ```  
 Make the API request in Postman -  
 ![API request - filtering](images/mongoose11.png)  
-OUTPUT: we get the object in the console -  
+OUTPUT:  
 ```JavaScript
 App running on port 8000...
 DB connection successful
@@ -554,9 +559,11 @@ Hello from the middleware
 GET /api/v1/tours?duration=5&difficulty=easy 200 49.183 ms - 9378
 ```  
 <br/>
+
 - Next use the data in order to implement it for filtering  
-- In Mongoose there are two ways of writing queries.
-  - The first way is to pass in a filter object to the find method.
+- In Mongoose there are two ways of writing queries.  
+  - The first way is to pass in a filter object to the find method.   
+ 
   ```JavaScript
   // get Tours (Filter)
 exports.getAllTours = async (request, response) => {
