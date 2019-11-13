@@ -477,7 +477,7 @@ const deleteData = async () => {
    - instead of a functions call (importData(), deleteData()) we will interact with the comment line
    - note that we can access the arguments in comment line with process.argv:
 console.log(process.argv);
-
+*/
 ```  
 Run the application in another terminal and add another argument at the end - ```> node dev-data/data/import-dev-data.js --import```  
 The output on the console will be these 3 lines of ```process.argv``` arguments:  
