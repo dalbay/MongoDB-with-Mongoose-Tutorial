@@ -413,6 +413,8 @@ Now, when we can create a new tour in Postman that accepts more data; and save i
                 "__v": 0
             }
 ```  
+<br/>
+  
 ---
 ### Importing Development Data (Reading from JSON file and saving to MongoDB)
 **Note**: this exercize is independed of the rest of the express application.
@@ -461,6 +463,7 @@ const importData = async () => {
   } catch (err) {
     console.log(err);
   }
+  process.exit(); // stopping app in terminal
 };
 
 // DELETE  ALL DATA FROM DB
@@ -471,6 +474,7 @@ const deleteData = async () => {
   } catch (err) {
     console.log(err);
   }
+  process.exit(); // stopping app in terminal
 };
 
 /* Executing Code in the Comment Line
@@ -509,9 +513,135 @@ OUTPUT:
 DB connection successful
 Data successfully deleted
 ```  
+You can also add ```process.exit()``` right after try-catch in the deleteData() and importData() function to stop the application in the terminal.  
+<br/>
+
+Import all the data from the JSON file into the database - ```> node dev-data/data/import-dev-data.js 
+--delete```  
+OUTPUT: The data is read from the JSON file and added to the database.  
+```
+DB connection successful
+Data successfully loaded
+```  
+---  
+## Making the API Better: Filtering  
+- allow the user to filter data using a Query String(key-value pairs in the URL) like: ```127.0.0.1:8000/api/v1/tours?duration=5&difficulty=easy```  
+- in Postman we can also add the query string to the Query Params, this will also add it to the URL. We can also turn them on an off with the checkmark next to each key-value.   
+![Query Sting in Postman](images/mongoose10.png)    
+-  Next ***access the data from the query string in the express application*** with the```query``` method.  Express does this for us in order to make node.js development a lot faster. Here we see an example of how to access the data:  
+```JavaScript  
+// get ALL Tours
+exports.getAllTours = async (request, response) => {
+  try {
+	// access data in the query string:
+    console.log(request.query);
+
+    const tours = await Tour.find();
+
+    response.status(200).json({
+      status: 'success',
+      . . .
+};
+```  
+Make the API request in Postman -  
+![API request - filtering](images/mongoose11.png)  
+OUTPUT: we get the object in the console -  
+```JavaScript
+App running on port 8000...
+DB connection successful
+Hello from the middleware
+{ duration: '5', difficulty: 'easy' }
+GET /api/v1/tours?duration=5&difficulty=easy 200 49.183 ms - 9378
+```  
+<br/>
+- Next use the data in order to implement it for filtering  
+- In Mongoose there are two ways of writing queries.
+  - The first way is to pass in a filter object to the find method.
+  ```JavaScript
+  // get Tours (Filter)
+exports.getAllTours = async (request, response) => {
+  try {
+    console.log(request.query);
+    // use the models (mongoose) find method with the filter object
+    const tours = await Tour.find({
+      duration: 5,
+      difficulty: 'easy'
+    });
+
+    response.status(200).json({
+      status: 'success',
+		. . . 
+};
+  ```  
+	Or just pass in the data from the query() method to ***implement a simple query***:
+	```JavaScript
+	const tours = await Tour.find(request.query);
+	```  	
+  - The second way is to chain some special Mongoose method for querying  
+  ```JavaScript
+      // get ALL Tours
+exports.getAllTours = async (request, response) => {
+  try {
+    // another way to filter:
+    const tours = await Tour.find()
+      .where('duration')
+      .equals(5)
+      .where('difficulty')
+      .equals('easy');
+
+    response.status(200).json({
+      status: 'success',
+	  . . .
+};  
+  ```  
+<br/>
+
+- Change this simple query implementation to be able to have paging and sorting functionality in the query paramters. We need to make sure we are not querying for these in the database. ***Exclude these special field names from the query string before filtering***.  
+  If we add page=2 in the query string for example, we would not get any result because we don't have a document with page set to 2.  
+- Get a hard copy of the query string by using ***destructuring***. - *The destructuring assignment syntax is a JavaScript expression that makes it possible to unpack values from arrays, or properties from objects, into distinct variables.*- Create an array of all the things we want to exclude 
+- Remove all elements in the array from the query object
+- Save the query for sorting, project, or other possible implementations and await it at the end.  
+Final query code:  
+```JavaScript
+// get ALL Tours
+exports.getAllTours = async (request, response) => {
+  try {
+    // BUILD QUERY
+    const queryObj = { ...request.query };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach(el => delete queryObj(el));
+
+    const query = Tour.find(queryObj);
+
+    // EXECUTE QUERY
+    const tours = await query;
+
+    //SEND RESPONSE
+    response.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+<br/>
+
+## Making the API Better: Advanced Filtering
 
 
----
+
+
+
+  
+
 
 
 
