@@ -476,15 +476,40 @@ const deleteData = async () => {
 /* Executing Code in the Comment Line
    - instead of a functions call (importData(), deleteData()) we will interact with the comment line
    - note that we can access the arguments in comment line with process.argv:
+*/   
 console.log(process.argv);
-*/
 ```  
 Run the application in another terminal and add another argument at the end - ```> node dev-data/data/import-dev-data.js --import```  
 The output on the console will be these 3 lines of ```process.argv``` arguments:  
+
 ```JavaScript
-[ 'C:\\Program Files\\nodejs\\node.exe',  'C:\\Users\\aygun\\OneDrive\\Documents\\GitHub\\Express_Tutorial\\dev-data\\data\\import-dev-data.js',
+/*
+[ 'C:\\Program Files\\nodejs\\node.exe',  
+ 
+ 'C:\\Users\\aygun\\OneDrive\\Documents\\GitHub\\Express_Tutorial\\dev-data\\
+ data\\import-dev-data.js',  
+ 
   '--import' ]
+*/
 ```  
+Add the if statement (before you call the process.argv), and check the third argument which will be added in the terminal and calls a functions accordingly:  
+```JavaScript
+if (process.argv[2] === '--import') {
+  importData();
+} else if (process.argv[2] === '--delete') {
+  deleteData();
+}
+
+console.log(process.argv);
+```  
+Delete all the data from the database in the terminal - ```> node dev-data/data/import-dev-data.js 
+--delete```  
+OUTPUT:  
+```
+DB connection successful
+Data successfully deleted
+```  
+
 
 ---
 
