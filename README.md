@@ -578,11 +578,13 @@ exports.getAllTours = async (request, response) => {
       status: 'success',
 	  . . . 
 };
-```   
-	Or just pass in the data from the query() method to ***implement a simple query***:
-	```JavaScript
+/*
+	***Simple Query Implementation***
+	Just pass in the data from the query string to the query() function. 
+*/
 	const tours = await Tour.find(request.query);
-	```  	
+```  
+	
   - The second way is to chain some special Mongoose method for querying  
   ```JavaScript
       // get ALL Tours
