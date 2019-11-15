@@ -607,7 +607,7 @@ exports.getAllTours = async (request, response) => {
 - Change this simple query implementation to be able to have paging and sorting functionality in the query paramters. We need to make sure we are not querying for these in the database. ***Exclude these special field names from the query string before filtering***.  
   If we add page=2 in the query string for example, we would not get any result because we don't have a document with page set to 2.  
 - Get a hard copy of the query string by using ***destructuring***. - *The destructuring assignment syntax is a JavaScript expression that makes it possible to unpack values from arrays, or properties from objects, into distinct variables.*- Create an array of all the things we want to exclude 
-- Remove all elements in the array from the query object
+- Remove all elements in the array from the query object by using the delete operator
 - Save the query for sorting, project, or other possible implementations and await it at the end.  
 Final query code:  
 ```JavaScript
@@ -617,7 +617,7 @@ exports.getAllTours = async (request, response) => {
     // BUILD QUERY
     const queryObj = { ...request.query };
     const excludeFields = ['page', 'sort', 'limit', 'fields'];
-    excludeFields.forEach(el => delete queryObj(el));
+    excludeFields.forEach(el => delete queryObj[el]);
 
     const query = Tour.find(queryObj);
 
@@ -640,12 +640,99 @@ exports.getAllTours = async (request, response) => {
   }
 };
 ```  
+Now when you request ```127.0.0.1:8000/api/v1/tours?difficulty=easy&page=2&sort=1&limit=10```in the URL page,sort and limit will be removed before database is filtered.
+
 <br/>
 
 ## Making the API Better: Advanced Filtering
+- Implementing different operators in the query 
+- In mongodb, this is how we would manually write the filter object for the query:  ```{ difficulty: 'easy', duration: { $gte: 5 } }```
+- Standart way of writing the query string including these operators: ```127.0.0.1:8000/api/v1/tours?duration[gte]=5&difficulty=easy```
+- the output for this request in the console is```{ difficulty: 'easy', duration: { gte: '5' } }```; so very similar to the filter object syntax. We just need to add the $ infront of the operators for filtering.  
+Final Code for Filtering:  
+```JavaScript
+exports.getAllTours = async (request, response) => {
+  try {
+    // Simple Filtering
+    //const tours = await Tour.find(request.query);
 
+    // BUILD QUERY
+    const queryObj = { ...request.query };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach(el => delete queryObj[el]);
 
+    // Advanced Filtering with Different Operators - gte, gt, lte, lt
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
 
+    const query = Tour.find(JSON.parse(queryStr));
+
+    // EXECUTE QUERY
+    const tours = await query;
+
+    // SEND RESPONSE
+    response.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+<br/>
+
+## Making the API Better: Sorting
+- In this example the user will be able to sort a field by passing it into the querystring -```127.0.0.1:8000/api/v1/tours?sort=price```. For descending order sorting place a minus(-) sign infront of price.  
+```JavaScript
+    let query = Tour.find(JSON.parse(queryStr));
+
+    // SORTING
+    if (request.query.sort) {
+      // query = query.sort(request.query.sort); -> one sorting criteria
+      const sortBy = request.query.sort.split().join(' ');  // -> multiple sorting criteria
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');  // -> default sorting
+    }
+
+    // EXECUTE QUERY
+    const tours = await query;
+```  
+Postman request with a sorting querystring - ```127.0.0.1:8000/api/v1/tours?sort=price,ratingAverage``` will result an Output of a tours list that is sorted by price and ratingAverage.
+ 
+## Making the API Better: Limiting Fields
+- Allow clients which field they want to get back in the response. This is also called **Projecting** - ```127.0.0.1:8000/api/v1/tours?fields=name,duration,difficulty,price```
+- The implementations will be similar to sorting  
+```JavaScript
+    // FIELD LIMITING
+    if (request.query.fields) {
+      const fields = request.query.fields.split(',').join(' ');
+      query = query.select(fields);
+    } else {
+      query = query.select('-__v');  // -> default will exclude the field mongoose creates and resond the rest
+    }
+
+    // EXECUTE QUERY
+    const tours = await query;
+```
+- We can also exclude field in the Schema, this is useful when we have sensitive data and make sure it won't be passed to the user. Go to the tourModel and set the select property for false. For example, the following will permanently hide the created date from the output:
+```JSON
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    select: false
+  },
+```
+<br/>
+
+## Making the API Better: Pagination
 
 
   

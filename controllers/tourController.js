@@ -28,6 +28,7 @@ exports.getAllTours = async (request, response) => {
 
     const query = Tour.find(queryObj);
 
+    console.log(request, query);
     // // another way to filter:
     // const query = await Tour.find()
     //   .where('duration')
