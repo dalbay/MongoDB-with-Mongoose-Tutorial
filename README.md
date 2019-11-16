@@ -766,6 +766,8 @@ Postman request with a sorting querystring - ```127.0.0.1:8000/api/v1/tours?sort
 - First, create a new route in the tourRouter.js  
   We need a middleware before we run the getAllTours handler. This middleware functions is going to manipulate the query object that is comming in.  
   We name the middlew function ```aliasTopTours```. Next create this middleware function in tourController.js  
+<br/>
+
 tourRoutes.js:  
 ```JavaScript
 // create a new route for Aliasing
@@ -784,6 +786,73 @@ exports.aliasTopTours = (req, res, next) => {
 };
 ```  
 Now make a request with this new route in Postman - ```127.0.0.1:8000/api/v1/tours/top-5-cheap```  
+
+<br/>
+
+## Refactoring API Features
+- Add a Class with methods for each of the API features - and create a new model  
+- Cut the code out of the getAllTours function and create the methods inside a class. Add this class to a new file and import this module where you need it.  
+- Folder utils -> apiFeatures.js - add this class and its methods in this file.  
+```JavaScript
+class APIFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filter() {
+    const queryObj = { ...this.queryString };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach(el => delete queryObj[el]);
+
+    // Advanced Filtering with Different Operators - gte, gt, lte, lt
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+    this.query = this.query.find(JSON.parse(queryStr));
+
+    // returns the object so we can chain sort() method onto it
+    return this;
+  }
+
+  sort() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split().join(' ');
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort('-createdAt'); // -> default sorting
+    }
+    return this;
+  }
+
+  limitField() {
+    if (this.queryString.fields) {
+      const fields = this.queryString.fields.split(',').join(' ');
+      this.query = this.query.select(fields);
+    } else {
+      this.query = this.query.select('-__v'); // -> default will exclude the field mongoose creates and resond the rest
+    }
+    return this;
+  }
+
+  paginate() {
+    const page = this.queryString.page * 1 || 1;
+    const limit = this.queryString.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+
+    this.query = this.query.skip(skip).limit(limit);
+
+    return this;
+  }
+}
+
+module.exports = APIFeatures;
+```  
+- require this module in tourController.js  
+```JavaScript
+// require the apiFeatures
+const APIFeatures = require('./../utils/apiFeatures');
+```
 
 
 
