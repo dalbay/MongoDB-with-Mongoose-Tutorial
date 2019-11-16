@@ -759,6 +759,34 @@ Postman request with a sorting querystring - ```127.0.0.1:8000/api/v1/tours?sort
 	
 	...
 ```  
+<br/>
+
+##  Making the API Better: Aliasing
+- Provide an Alias Route, to make requests that are popular; for example, making a request for the the 5 best, cheapest tours (notice the - before the fields) - ```127.0.0.1:8000/api/v1/tours?limit=5&sort=-ratingAverage,price```  
+- First, create a new route in the tourRouter.js  
+  We need a middleware before we run the getAllTours handler. This middleware functions is going to manipulate the query object that is comming in.  
+  We name the middlew function ```aliasTopTours```. Next create this middleware function in tourController.js  
+tourRoutes.js:  
+```JavaScript
+// create a new route for Aliasing
+router
+  .route('/top-5-cheap')
+  .get(tourController.aliasTopTours, tourController.getAllTours);
+```  
+tourController.js: (add the middleware somewhere on the top)  
+```JavaScript
+// Aliasing the API
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+};
+```  
+Now make a request with this new route in Postman - ```127.0.0.1:8000/api/v1/tours/top-5-cheap```  
+
+
+
 
 
   
