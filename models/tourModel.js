@@ -72,8 +72,16 @@ tourSchema.virtual('durationWeeks').get(function() {
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
+// also called the (Pre Save Hook)
 tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// DOCUMENT MIDDLEWARE: post middleware not only has access to next but also to  the document that was just saved to the database.
+tourSchema.post('save', function(doc, next) {
+  // here we have the finished document
+  console.log(doc);
   next();
 });
 

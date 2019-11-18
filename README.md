@@ -1054,7 +1054,8 @@ const tourSchema = new mongoose.Schema(
 - Create a Pre Document Middleware Example:  
 In this example we will create a slug for each of the document. (A ***Slug*** is a string that we can put in the URL - for that we used the Slugify package).  
 First install slugify - ```npm i slugify```  
-Require it in tourModel.js - ``` ```  
+Require it in tourModel.js - ```const slugify = require('slugify');```  
+Create the Pre Document Middleware -  
 ```JavaScript
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 tourSchema.pre('save', function(next) {
@@ -1071,19 +1072,25 @@ const tourSchema = new mongoose.Schema(
     . . .
 	},
     slug: String,  // adding variable to schema
-	duration: {
 	. . .
   },
-  {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+  . . .
 );
+```  
 
-```
 Run the app; make a post```127.0.0.1:8000/api/v1/tours``` request in Postman - this will create a slug property which is based on the name, before the output. 
 ![document middleware api](images/mongoose15.png)  
-  
+
+- Create a Post Document Middleware Example:  
+```JavaScript
+// DOCUMENT MIDDLEWARE: post middleware not only has access to next() function,
+// but also to  the document that was just saved to the database.
+tourSchema.post('save', function(doc, next) {
+  // here we have the finished document
+  console.log(doc);
+  next();
+});
+```
 
 
   
