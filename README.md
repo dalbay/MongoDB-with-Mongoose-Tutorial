@@ -899,39 +899,40 @@ tourController.js file:
 // HANDLER FOR AGGREGATE FUNCTIONS
 exports.getTourStats = async (request, response) => {
   try {
-    const stats = Tour.aggregate([
+    // if you don't await here, it returns an aggregate object instead
+    const stats = await Tour.aggregate([
       {
         $match: { ratingsAverage: { $gte: 4.5 } }
       },
       {
         $group: {
-          _id: null,
+          _id: { $toUpper: '$difficulty' },
+          // _id: '$difficulty', // groups tours;
+          //_id: null, // null is default
+          numTours: { $sum: 1 }, // adds one for each tour
+          numRatings: { $sum: '$ratingsQuantity' },
           avgRating: { $avg: '$ratingsAverage' },
           avgPrice: { $avg: '$price' },
           minPrice: { $min: '$price' },
           maxPrice: { $max: '$price' }
         }
+      },
+      {
+        $sort: { avgPrice: 1 } // 1 for ascending
       }
+      // {
+      //   $match: { _id: { $ne: 'EASY' } } // leaves out
+      // }
     ]);
-    response.status(200).json({
-      status: 'success',
-      data: {
-        stats
-      }
-    });
-  } catch (err) {
-    response.status(404).json({
-      status: 'Fail',
-      message: err
-    });
-  }
-};
 ```  
 Add a new Route to tourRouters.js:  
 ```JavaScript
 // create a new route for matching and grouping
 	router.route('/tour-stats').get(tourController.getTourStats);
-```
+```  
+Run the app; make a ```127.0.0.1:8000/api/v1/tours/tour-stats``` request in Postman  
+![aggregate api](images/mongoose13.png)  
+
 
 
 
