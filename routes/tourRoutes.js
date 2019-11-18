@@ -10,6 +10,14 @@ const tourController = require('./../controllers/tourController');
 // (to define parameter middleware use param function like this):
 //router.param('id', tourController.checkId);
 
+// create a new route for Aliasing
+router
+  .route('/top-5-cheap')
+  .get(tourController.aliasTopTours, tourController.getAllTours);
+
+// create a new route for matching and grouping (AGGREGATE FUNCTIONS)
+router.route('/tour-stats').get(tourController.getTourStats);
+
 // use router:
 router
   .route('/')

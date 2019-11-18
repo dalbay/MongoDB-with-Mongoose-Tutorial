@@ -896,11 +896,12 @@ exports.getAllTours = async (request, response) => {
   each of the states is an object;  
 tourController.js file:  
 ```JavaScript
+// HANDLER FOR AGGREGATE FUNCTIONS
 exports.getTourStats = async (request, response) => {
   try {
     const stats = Tour.aggregate([
       {
-        $match: { ratingAverage: { $gte: 4.5 } }
+        $match: { ratingsAverage: { $gte: 4.5 } }
       },
       {
         $group: {
@@ -926,7 +927,7 @@ exports.getTourStats = async (request, response) => {
   }
 };
 ```  
-Add a new route to tourRouters.js:  
+Add a new Route to tourRouters.js:  
 ```JavaScript
 // create a new route for matching and grouping
 	router.route('/tour-stats').get(tourController.getTourStats);
