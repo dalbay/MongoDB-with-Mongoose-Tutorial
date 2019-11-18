@@ -790,11 +790,11 @@ Now make a request with this new route in Postman - ```127.0.0.1:8000/api/v1/tou
 <br/>
 
 ## Refactoring API Features
-- Add a Class with methods for each of the API features - and create a new model  
-- Cut the code out of the getAllTours function and create the methods inside a class. Add this class to a new file and import this module where you need it.  
-- Folder utils -> apiFeatures.js - add this class and its methods in this file.  
+- Add a Class with methods for each of the API features - and create a new model - apiFeatures.js
+- Cut the code out of the getAllTours function and create the methods inside a classin this new module.  
 ```JavaScript
 class APIFeatures {
+  // passing in Mongoose query and the queryString that we get from Express (the route)
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
@@ -852,7 +852,54 @@ module.exports = APIFeatures;
 ```JavaScript
 // require the apiFeatures
 const APIFeatures = require('./../utils/apiFeatures');
+```  
+<br/>
+
+## Aggregation Pipeline: Matching and Grouping
+- Declare a pipline through which documents will be manipulated to become aggregated results.  Here we will use Mongodb features - lookup MongoDB Documentation for Aggreagtion and Aggreagtion Pipeline - Reference - ***Operators***; we will be passing in some of these operators to the ```aggregate``` function as arguments.
+- it is a bit like working with query, the difference is that with ```aggregate()``` we can manipulate the data in a few different steps.  
+![aggregate function](images/mongoose12.png)  
+- Note that:  
+  ```match``` is used to select or filter the documents; just like a filter object in MongoDB;  
+  each of the states is an object;  
+tourController.js file:  
+```JavaScript
+exports.getTourStats = async (request, response) => {
+  try {
+    const stats = Tour.aggregate([
+      {
+        $match: { ratingAverage: { $gte: 4.5 } }
+      },
+      {
+        $group: {
+          _id: null,
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' }
+        }
+      }
+    ]);
+    response.status(200).json({
+      status: 'success',
+      data: {
+        stats
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
+Add a new route to tourRouters.js:  
+```JavaScript
+// create a new route for matching and grouping
+	router.route('/tour-stats').get(tourController.getTourStats);
 ```
+
 
 
 
