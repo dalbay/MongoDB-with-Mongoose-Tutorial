@@ -1009,7 +1009,34 @@ router.route('/monthly-plan/:year').get(tourController.gtMonthlyPlan);
 ```  
 Run the app; make a ```127.0.0.1:8000/api/v1/tours/monthly-plan/2021``` request in Postman  
 ![aggregate api](images/mongoose14.png)  
-<br/>
+<br/>  
+
+##  Virtual Properties
+- Working on the model - tourModel.js
+- Virtual properties are fields that we can define on our schema that will not be persistant/saved into the database.
+- Create a virtual porperty that contains the tour duration in weeks.  
+```JavaScript
+// Define a Virtual Property:
+// use a regular function instead of an arrow function because we need this keyword
+tourSchema.virtual('durationWeeks').get(function() {  
+  return this.duration / 7;
+});
+```  
+- define in the schema that we want the virtual properties in the output:
+```JavaScript
+// create schema for tours:
+const tourSchema = new mongoose.Schema(
+  {
+    name: {
+    . . .
+	
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
+);
+```  
 
 
 
