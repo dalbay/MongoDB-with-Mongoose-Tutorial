@@ -1013,7 +1013,7 @@ Run the app; make a ```127.0.0.1:8000/api/v1/tours/monthly-plan/2021``` request 
 
 ##  Virtual Properties
 - Working on the model - tourModel.js
-- Virtual properties are fields that we can define on our schema that will not be persistant/saved into the database.
+- ***Virtual Properties*** - are fields that we can define on our schema that will not be persistant/saved into the database.
 - Create a virtual porperty that contains the tour duration in weeks.  
 ```JavaScript
 // Define a Virtual Property:
@@ -1037,13 +1037,53 @@ const tourSchema = new mongoose.Schema(
   }
 );
 ```  
+<br/>
 
+## Document Middleware
+- Like Express, Mongoose also has the concept of middleware
+- Each time a new document is saved in the database, we can run functions that run before or after the event.
+- The are four types of middleware in Mongoose:
+  1. DOCUMENT
+  2. QUERY
+  3. AGGREGATE
+  4. MODEL 
 
+- ***Document Middleware***
+  - middleware that works on the currently processed document.
+  - we define a middleware on the schema just like virtual properties.  
+- Create a Pre Document Middleware Example:  
+In this example we will create a slug for each of the document. (A ***Slug*** is a string that we can put in the URL - for that we used the Slugify package).  
+First install slugify - ```npm i slugify```  
+Require it in tourModel.js - ``` ```  
+```JavaScript
+// DOCUMENT MIDDLEWARE: runs before .save() and .create()
+tourSchema.pre('save', function(next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+```  
+Add the variable to the schema.  
+```JavaScript
+// create schema for tours:
+const tourSchema = new mongoose.Schema(
+  {
+    name: {
+    . . .
+	},
+    slug: String,  // adding variable to schema
+	duration: {
+	. . .
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
+);
 
-
-
-
-
+```
+Run the app; make a post```127.0.0.1:8000/api/v1/tours``` request in Postman - this will create a slug property which is based on the name, before the output. 
+![document middleware api](images/mongoose15.png)  
+  
 
 
   
