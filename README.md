@@ -853,6 +853,38 @@ module.exports = APIFeatures;
 // require the apiFeatures
 const APIFeatures = require('./../utils/apiFeatures');
 ```  
+- declaring an instance of APIFeatures to access these methods in the getAllTours route handler.  
+```JavaScript
+// ROUTE HANDLER for Tours
+
+// get ALL Tours
+exports.getAllTours = async (request, response) => {
+  try {
+    // EXECUTE QUERY
+    const features = new APIFeatures(Tour.find(), request.query)
+      .filter()
+      .sort()
+      .limitField()
+      .paginate();
+	  
+    const tours = await features.query;
+
+    // SEND RESPONSE
+    response.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```  
 <br/>
 
 ## Aggregation Pipeline: Matching and Grouping
