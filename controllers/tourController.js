@@ -167,3 +167,56 @@ exports.getTourStats = async (request, response) => {
     });
   }
 };
+
+// another function using the aggregation pipeline.
+// calculate the busiest month of a given year.
+exports.getMonthlyPlan = async (request, response) => {
+  try {
+    // define the year - passed in with URL param
+    const year = request.params.year * 1;
+    // find the starting date for each tours; unwind and match
+    const plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates' // one tour for each date
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' }, // use mongoDB aggregation pipeline operators (what from where?)
+          numToursStarts: { $sum: 1 }, // count tours
+          tours: { $push: '$name' } // which tours - array
+        }
+      },
+      {
+        $addFields: { month: '$_id' }
+      },
+      {
+        $project: {
+          _id: 0 // 0 will not show
+        }
+      },
+      {
+        $sort: { numToursStarts: -1 } // -1 for descending
+      }
+    ]);
+
+    response.status(200).json({
+      status: 'success',
+      data: {
+        plan
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};

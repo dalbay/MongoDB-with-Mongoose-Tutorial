@@ -924,6 +924,20 @@ exports.getTourStats = async (request, response) => {
       //   $match: { _id: { $ne: 'EASY' } } // leaves out
       // }
     ]);
+
+    response.status(200).json({
+      status: 'success',
+      data: {
+        stats
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
 ```  
 Add a new Route to tourRouters.js:  
 ```JavaScript
@@ -932,6 +946,72 @@ Add a new Route to tourRouters.js:
 ```  
 Run the app; make a ```127.0.0.1:8000/api/v1/tours/tour-stats``` request in Postman  
 ![aggregate api](images/mongoose13.png)  
+<br/>
+
+## Aggregation Pipeline: Unwinding and Projecting
+- Create another function using the aggregation pipeline to calculate the busiest month of a given year.  
+```JavaScript
+exports.getMonthlyPlan = async (request, response) => {
+  try {
+    // define the year - passed in with URL param
+    const year = request.params.year * 1;
+    // find the starting date for each tours; unwind and match
+    const plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates' // one tour for each date
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' }, // use mongoDB aggregation pipeline operators (what from where?)
+          numToursStarts: { $sum: 1 }, // count tours
+          tours: { $push: '$name' } // which tours - array
+        }
+      },
+      {
+        $addFields: { month: '$_id' }
+      },
+      {
+        $project: {
+          _id: 0 // 0 will not show
+        }
+      },
+      {
+        $sort: { numToursStarts: -1 } // -1 for descending
+      }
+    ]);
+
+    response.status(200).json({
+      status: 'success',
+      data: {
+        plan
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+  }
+};
+```
+- implement the route in tourRoutes.js:
+```JavaScript
+// create a new route (AGGREGATE Pipeline)
+router.route('/monthly-plan/:year').get(tourController.gtMonthlyPlan);  
+```  
+Run the app; make a ```127.0.0.1:8000/api/v1/tours/monthly-plan/2021``` request in Postman  
+![aggregate api](images/mongoose14.png)  
+<br/>
+
+
 
 
 

@@ -15,9 +15,10 @@ router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTours, tourController.getAllTours);
 
-// create a new route for matching and grouping (AGGREGATE FUNCTIONS)
+// create a new route for matching and grouping (AGGREGATE Pipeline)
 router.route('/tour-stats').get(tourController.getTourStats);
-
+// create a new route (AGGREGATE Pipeline)
+router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 // use router:
 router
   .route('/')
