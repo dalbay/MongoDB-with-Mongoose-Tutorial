@@ -1090,8 +1090,35 @@ tourSchema.post('save', function(doc, next) {
   console.log(doc);
   next();
 });
-```
+```  
+<br/>
 
+## Query Middleware  
+- allows us to run functions before or after a certain query is executed.
+- in this example we are adding a ***Pre Find Hook***:  
+In tourModel.js -  
+```JavaScript
+
+```  
+Add the variable to the schema.
+```JavaScript
+// create schema for tours:
+const tourSchema = new mongoose.Schema(
+  {
+	. . .
+  },
+    startDates: [Date],
+	
+    secretTour: {
+      type: Boolean, // true if secret tour
+      default: false
+    }
+  },
+  . . .
+);
+```  
+Create a secret tour for testing purpose:  
+![document middleware api](images/mongoose16.png) 
 
   
 
