@@ -1126,6 +1126,7 @@ const tourSchema = new mongoose.Schema(
 ```  
 Create a secret tour for testing purpose:  
 ![document middleware api](images/mongoose16.png)  
+
 Create a ***Post Find Hook*** / post find middleware:  
 ```JavaScript
 tourSchema.post(/^find/, function(docs, next) {
@@ -1137,7 +1138,18 @@ tourSchema.post(/^find/, function(docs, next) {
 <br/>
 
 ## Aggregation Middleware
-
+- Exclude the secretTour with an aggregate functions at the model level, so we don't have to repeat code in the tourController.  
+```JavaScript
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function(next) {
+  // this is an array; unshift adds to beginning of an arrya
+  this.pipeline().unshift({
+    $match: { secretTour: { $ne: true } }
+  });
+  console.log(this.pipeline);
+  next();
+});
+```
   
 
 

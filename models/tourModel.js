@@ -98,7 +98,16 @@ tourSchema.pre('/^find/', function(next) {
 
 tourSchema.post(/^find/, function(docs, next) {
   // this will run after the query has executed, that's why it has access to the documents
-  console.log(docs);
+  next();
+});
+
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function(next) {
+  // this is an array; unshift adds to beginning of an arrya
+  this.pipeline().unshift({
+    $match: { secretTour: { $ne: true } }
+  });
+  console.log(this.pipeline);
   next();
 });
 
