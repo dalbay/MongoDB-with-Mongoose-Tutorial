@@ -1188,17 +1188,49 @@ const tourSchema = new mongoose.Schema(
 
 ## Data Validation: Custom Validators
 - in this example we will check and make sure that the priceDiscount is not lower than the price.  
-- to declare a custom validation use the ```validate```property; a callback function which has access to the value that was passed in - this case the price discount the user specifies.
+- to declare a custom validation use the ```validate```property; a callback function which has access to the value that was passed in - this case the price discount the user specifies.  
+```JavaScript
+	. . .
+    },
+    price: {
+      type: Number,
+      required: [true, 'A tour must have a price']
+    },
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function(val) {
+          return val < this.price;
+        },
+        message: 'Discount price ( {VALUE} ) should be below the regular price'
+      }
+    },
+```  
 - ***NOTE:***  
   that a validator returns a true/false;  
   we have access to the value being passed in by Mongoose with```{VALUE}```;  
   this keyword only points to current doc on NEW document creation;  
-  you can attach additional data validation libraries from npm, and use them with the this keyword on your mongoose application for custom validation - for example, to check if its a valid credit card number, boolean, float, ISBN ... (The most popular library is called ***Validator***- A library of string validators and sanitizers.) - search validator github for the documentation.
-  In this example we will be using ```isAlhpa(str [,locale])```- to check if the tour name only contains letters.
-```JavaScript
-
-```  
 ![Mongoose custom validation](images/mongoose17.png)  
+- Use the **Validator Library** - A library of string validators and sanitizers.   
+You can attach additional data validation libraries from npm, and use them with the this keyword on your mongoose application for custom validations; for example, to check if its a valid credit card number, boolean, float, ISBN ... 
+- search validator github for the documentation.  
+In this example we will be using ```isAlhpa(str [,locale])```- to check if the tour name only contains letters.   
+- Install - ```> npm i validator```  
+- Import in tourModel.js - ```const validator = require('validator');```  
+- Use it with the validate property and plug-in the function
+```JavaScript
+    name: {
+      type: String,
+      required: [true, 'A tour must have a name'], //pass in an array instead to use validators
+      unique: true,
+      trim: true,
+      maxlength: [40, 'A tour name must have less or equal then 40 characters'],
+      minlength: [10, 'A tour name must have more or equal then 10 characters'],
+      validate: [validator.isAlpha, 'Tour name must only contain characters']
+    },
+```  
+
+
 
 
 
