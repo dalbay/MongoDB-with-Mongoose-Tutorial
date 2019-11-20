@@ -1095,10 +1095,17 @@ tourSchema.post('save', function(doc, next) {
 
 ## Query Middleware  
 - allows us to run functions before or after a certain query is executed.
-- in this example we are adding a ***Pre Find Hook***:  
+- in this example we will be adding a ***Pre Find Hook***- to hide some tours from certain queries to be display;  
+  add a new boolean variable ```secretTour```which will be passed to the query.  
+  use a regex like a /^find/ instead of the find function itself; so that all query functions that begin with find - findById, findOne,... will run this middleware.
 In tourModel.js -  
 ```JavaScript
-
+// QUERY MIDDLEWARE
+tourSchema.pre('/^find/', function(next) {
+  // secrete tours will not be included - $ne = 'not equal'
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
 ```  
 Add the variable to the schema.
 ```JavaScript
@@ -1118,7 +1125,18 @@ const tourSchema = new mongoose.Schema(
 );
 ```  
 Create a secret tour for testing purpose:  
-![document middleware api](images/mongoose16.png) 
+![document middleware api](images/mongoose16.png)  
+Create a ***Post Find Hook*** / post find middleware:  
+```JavaScript
+tourSchema.post(/^find/, function(docs, next) {
+  // this will run after the query has executed, that's why it has access to the documents
+  console.log(docs);
+  next();
+});
+```  
+<br/>
+
+## Aggregation Middleware
 
   
 

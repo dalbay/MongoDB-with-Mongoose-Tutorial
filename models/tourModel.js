@@ -90,9 +90,15 @@ tourSchema.post('save', function(doc, next) {
 });
 
 // QUERY MIDDLEWARE
-tourSchema.pre('find', function(next) {
-  // secrete tour for a group
+tourSchema.pre('/^find/', function(next) {
+  // secrete tours will not be included - $ne = 'not equal'
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
 
+tourSchema.post(/^find/, function(docs, next) {
+  // this will run after the query has executed, that's why it has access to the documents
+  console.log(docs);
   next();
 });
 
