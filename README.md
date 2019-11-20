@@ -1149,7 +1149,41 @@ tourSchema.pre('aggregate', function(next) {
   console.log(this.pipeline);
   next();
 });
-```
+```  
+<br/>  
+
+## Data Validation: Built-In Validators  
+- Mongoose provides validation tools for data that is comming into our model
+- checking format of data that is entered for each field in the document schema; and that values have been actually entered.
+- Data validation is performed on the model.
+```JavaScript
+const tourSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'A tour must have a name'], //pass in an array instead to use validators
+      unique: true,
+      trim: true,
+      maxlength: [40, 'A tour name must have less or equal then 40 characters'],
+      minlength: [10, 'A tour name must have more or equal then 10 characters']
+    },
+	. . . 
+	ratingsAverage: {
+      type: Number,
+      default: 4.5,
+      min: [1, 'Rating must be above 1.0'],
+      max: [5, 'Rating must be below 5.0']
+    },
+	difficulty: {
+      type: String,
+      required: [true, 'A tour must have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty is either: easy, medium, difficult'
+      }
+    },
+```  
+- Recall the tour handler function (in tourController.js) for update - we set the ```runValidators: true``` so the update operation can also handles this validation.
   
 
 
