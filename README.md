@@ -1183,7 +1183,26 @@ const tourSchema = new mongoose.Schema(
       }
     },
 ```  
-- Recall the tour handler function (in tourController.js) for update - we set the ```runValidators: true``` so the update operation can also handles this validation.
+- Recall the tour handler function (in tourController.js) for update - we set the ```runValidators: true``` so the update operation can also handles this validation.  
+<br/>
+
+## Data Validation: Custom Validators
+- in this example we will check and make sure that the priceDiscount is not lower than the price.  
+- to declare a custom validation use the ```validate```property; a callback function which has access to the value that was passed in - this case the price discount the user specifies.
+- ***NOTE:***  
+  that a validator returns a true/false;  
+  we have access to the value being passed in by Mongoose with```{VALUE}```;  
+  this keyword only points to current doc on NEW document creation;  
+  you can attach additional data validation libraries from npm, and use them with the this keyword on your mongoose application for custom validation - for example, to check if its a valid credit card number, boolean, float, ISBN ... (The most popular library is called ***Validator***- A library of string validators and sanitizers.) - search validator github for the documentation.
+  In this example we will be using ```isAlhpa(str [,locale])```- to check if the tour name only contains letters.
+```JavaScript
+
+```  
+![Mongoose custom validation](images/mongoose17.png)  
+
+
+
+
   
 
 
